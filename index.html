@@ -1,0 +1,119 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+	<title>Breakout</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+</head>
+
+<body onkeyDown='movebarra(event.keyCode);'>
+
+<h1 style="text-align:center; color:#7cbc40; font:bold 38px Arial; text-shadow:3px 3px 3px #333333; letter-spacing:1px;">Breakout</h1>
+<center>
+	<canvas id="canvas" width="400" height="450" style="border:12px solid #9a9a9a; border-radius:12px;"></canvas><br><br>
+	<input type="button" class="botao" value="Jogar" onclick="pontos=0; fase=1; inicio();"><br><br>
+</center>
+<script>
+canvas=document.getElementById("canvas").getContext("2d");
+x=20,y=200;
+dx=2,dy=2;
+tamanho=10;
+vivo=false;
+barrax=150;
+fase=1;
+pontos=0;
+function inicio(){
+	dx=2,dy=3;
+	x=20,y=200;
+	vivo=true;
+	barrax=150;
+	bloco=[];
+	for(c=0;c<fase;c++)
+		for(j=0;j<5;j++)
+			for(i=0;i<8;i++)
+				bloco.push({x:i*50,y:j*20,cor:c,vivo:true});
+}
+function anda(){
+	canvas.fillStyle="#2F4F4F";
+	canvas.fillRect(0,0,400,450);
+	canvas.fillStyle="#FF0000";
+	canvas.fillRect(barrax,430,100,20);
+	if(vivo){
+		for(var i=0;i<bloco.length;i++){
+			if(bloco[i].vivo){
+				switch(bloco[i].cor){
+					case 0: canvas.fillStyle="#0000ff"; break;
+					case 1: canvas.fillStyle="#00ff00"; break;
+					case 2: canvas.fillStyle="#ff0000"; break;
+					case 3: canvas.fillStyle="#00ffff"; break;
+					case 4: canvas.fillStyle="#ff00ff"; break;
+					case 5: canvas.fillStyle="#ffff00"; break;
+					case 6: canvas.fillStyle="#e1e1e1"; break;
+					case 7: canvas.fillStyle="#cccccc"; break;
+					case 8: canvas.fillStyle="#999999"; break;
+					case 9: canvas.fillStyle="#666666"; break;
+					default: canvas.fillStyle="#333333"; break;
+				}
+				canvas.fillRect(bloco[i].x,bloco[i].y,50,20);
+			}
+		}
+        for(i=bloco.length-1;i>=0;i--){
+			if(bloco[i].vivo){
+				dif=y-bloco[i].y-tamanho;
+				if((dy<0&&(dif>0&&dif<20))||(dy>0&&(dif<=0&&dif>-20))){
+					if(x>bloco[i].x&&x<bloco[i].x+50){
+						dy=dy*-1;
+						bloco[i].vivo=false;
+						pontos++;
+					}
+				}
+			}
+		}
+		x+=dx;
+		y+=dy;
+		if(y>=430-tamanho){
+			dif=x-barrax;
+			if(dif>-10&&dif<110){
+				dy=dy*-1;
+				if(dif>=-10&&dif<15)dx=-3;
+				if(dif>=15&&dif<50)dx=-2;
+				if(dif>=50&&dif<85)dx=2;
+				if(dif>=85&&dif<110)dx=3;
+				y=430-tamanho;
+			}
+		}
+		if(y>=450-tamanho){
+			vivo=false;
+			pontos=0;
+		}
+		if(y<=0+tamanho){
+			dy=dy*-1;
+			y=tamanho;
+		}
+		if(x>=400-tamanho)dx=dx*-1;
+		if(x<=0+tamanho)dx=dx*-1;
+		canvas.fillStyle="#00FF00";
+		canvas.beginPath();
+		canvas.arc(x,y,tamanho,0,Math.PI*2,false);
+		canvas.fill();
+		fim=true;
+		for(j=0;j<bloco.length;j++)
+			if(bloco[j].vivo)
+				fim=false;
+        if(fim){
+			fase++;
+			inicio();
+		}
+	}
+}
+function movebarra(e){
+	if(e==37)barrax-=40;
+	if(barrax<0)barrax=0;
+	if(e==39)barrax+=40;
+	if(barrax>300)barrax=300;
+}
+setInterval('anda()',10);
+</script>
+</body>
+</html>
